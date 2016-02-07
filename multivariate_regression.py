@@ -1,8 +1,8 @@
 # ------------------------------------------------------------------------------------------------------------------------------------
-# Title			: Multivariate Regression using Gradient Descent
-# Description		: This is an implementation of gradient descent algorithm to minimize the least squares error for Multivariate Linear regression.
-# Author		: Subburam Rajaram
-# IMAT Number   : 03658122
+# Title             : Multivariate Regression using Gradient Descent
+# Description       : This is an implementation of gradient descent algorithm to minimize the least squares error for Multivariate Linear regression.
+# Author            : Subburam Rajaram
+# IMAT Number       : 03658122
 # ------------------------------------------------------------------------------------------------------------------------------------
 
 import numpy as np
@@ -42,4 +42,3 @@ for iter in range(0, iterations):
     Weight = Weight - stepsize * gradient
     print "Intercept b: ", Weight[0]
     print "Weight W: ", Weight[1:columns].T
-
