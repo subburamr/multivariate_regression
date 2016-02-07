@@ -1,10 +1,17 @@
+# ------------------------------------------------------------------------------------------------------------------------------------
+# Title			: Multivariate Regression using Gradient Descent
+# Description		: This is an implementation of gradient descent algorithm to minimize the least squares error for Multivariate Linear regression.
+# Author		: Subburam Rajaram
+# IMAT Number   : 03658122
+# ------------------------------------------------------------------------------------------------------------------------------------
+
 import numpy as np
 
-#Initialize constants
+# Initialize constants
 stepsize = 0.01
 iterations = 1000
 
-### Read dataset from disk and structure it
+# Read dataset from disk and structure it
 Data = np.loadtxt("airfoil_self_noise.dat")
 rows = Data.shape[0]
 columns = Data.shape[1]
@@ -28,13 +35,11 @@ Weight = np.zeros((columns, 1))
 Cost = np.zeros((iterations, 1))
 
 for iter in range(0, iterations):
-
+    print "\nIteration:", iter
     Cost[iter] = (0.5/rows) * np.dot((np.dot(X, Weight) - Y).T, (np.dot(X, Weight) - Y))
+    print "Cost:", Cost[iter]
     gradient = np.dot(X.T, (np.dot(X, Weight) - Y))/rows
     Weight = Weight - stepsize * gradient
-
-    print "\nIteration:", iter
-    print "Cost:", Cost[iter]
     print "Intercept b: ", Weight[0]
     print "Weight W: ", Weight[1:columns].T
 
