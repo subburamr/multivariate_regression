@@ -1,87 +1,40 @@
 import numpy as np
 
-### Initalize variables
+#Initialize constants
+stepsize = 0.01
+iterations = 1000
 
-stepsize = 0.5
-iterations = 100
-
-#will be using W0 as b
-
-# W1 = np.empty_like(W)
-# W1[0] = 132.83
-# W1[1] = -0.0013
-# W1[2] = -0.4221
-# W1[3] = -35.6741
-# W1[4] = 0.0999
-# W1[5] = -147.2917
-
-#W = W1
-dJdW = np.zeros(3)
-gradient = np.zeros(3)
-
-### Read data set and structure it
-#Data = np.loadtxt("airfoil_self_noise.dat")
-Data = np.loadtxt("test")
+### Read dataset from disk and structure it
+Data = np.loadtxt("airfoil_self_noise.dat")
+rows = Data.shape[0]
 columns = Data.shape[1]
-Y = Data[:,columns - 1 ]
-F = Data[:,0:(columns - 1)]
-F_normed = (F - F.mean(0)) / (F.max(0) - F.min(0))
-#F_normed = (F - F.mean(0)) / F.std(0)
+Y = Data[:,columns - 1 ]        # Labels
+Y = Y.reshape((rows,1))
+F = Data[:,0:(columns - 1)]     # Features
 
-ones = np.ones(Data.shape[0])
+# Feature scaling and Mean normalization
+F_normed = np.empty_like(F)
+F_mean = F.mean(0)
+F_std = F.std(0)
+for i in range(0, rows):
+    F_normed[i,:] = np.divide(( F[i,:] - F_mean ), F_std)
+
+# stack column of ones to X for the constant term
+ones = np.ones(rows)
 X = np.column_stack((ones,F_normed))
-#print X
 
-
-#gradient calculation
-# def grad(X, Y, W):
-#     #print "\nValue of dJdW is", dJdW
-#     for j in range(len(W)):
-#         sum = 0
-#         for i in range(len(Y)):
-#             sum+= ( np.dot(X[i,:],W) - Y[i] ) * X[i,j]
-#          #   sum+= (Y[i] - (np.dot(W,X[i,:]))) * X[i,j]
-#         print sum/len(Y)
-#         dJdW[j] = sum/len(Y)
-#     print "\nValue of dJdW is", dJdW
-#     return dJdW
-
-
-
-#grad descent implementation
-def grad(X, Y, W):
-    H = np.dot(X,W)
-    error = (H - Y)
-    gradient = np.dot(X.T, error) / len(Y)
-
- #   for i in range(len(W)):
- #       #temp = error * X[:,i]
- #       temp = np.dot(X[:,i].T, error)
- #       temp1[i] = W[i] - stepsize * (1.0 / len(Y)) * temp.sum()
-    return gradient
-
-def cost():
-    H = X.dot(W)
-    sqErrors = ( H - Y ) ** 2
-    cost = (1.0 / (2 * len(Y))) * sqErrors.sum()
-    #cost = 0
-    #for i in range(len(Y)):
-    #   cost += ( np.dot(X[i,:],W) - Y[i] ) * ( np.dot(X[i,:],W) - Y[i] )
-    return cost
-
+# Weight Attribute Vector where W[0] would hold the value of constant term
+Weight = np.zeros((columns, 1))
+Cost = np.zeros((iterations, 1))
 
 for iter in range(0, iterations):
-    print "\n\nIteration:", iter
-    print "\nValue of W before updation is", W
-    dJdW = grad(X, Y, W)
-    tempW = W - stepsize * (dJdW)
 
-    #print "\nValue of tempW is", tempW
-    W = tempW
-    print "\nValue of W after updation is", W
-    print "the cost value is", cost()
+    Cost[iter] = (0.5/rows) * np.dot((np.dot(X, Weight) - Y).T, (np.dot(X, Weight) - Y))
+    gradient = np.dot(X.T, (np.dot(X, Weight) - Y))/rows
+    Weight = Weight - stepsize * gradient
 
-
-
-
+    print "\nIteration:", iter
+    print "Cost:", Cost[iter]
+    print "Intercept b: ", Weight[0]
+    print "Weight W: ", Weight[1:columns].T
 
